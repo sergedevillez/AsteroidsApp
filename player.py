@@ -4,10 +4,11 @@ from circleshape import CircleShape
 from shot import Shot
 
 class Player(CircleShape):
-    def __init__(self, x, y):
+    def __init__(self, x, y, name):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.shot_timer = 0
+        self.name = name
 
 
     def draw(self, screen):

@@ -4,6 +4,7 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
+from score import Score
 
 def main():
     print("Starting Asteroids!")
@@ -25,34 +26,49 @@ def main():
     Asteroid.containers = (asteroids, updatables, drawables)
     AsteroidField.containers = (updatables)
     Shot.containers = (shots, updatables, drawables)
+    Score.containers = (updatables, drawables)
 
-    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+    player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 'Serge')
     asteroidfield = AsteroidField()
+    score = Score(10, 10)
+
     dt = 0
 
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return
+        running = True
 
-        screen.fill("black")
-        updatables.update(dt)
-        for asteroid in asteroids:
-            if asteroid.check_collision(player):
-                print("Game over!")
-                exit(0)
-        for asteroid in asteroids:
-            for shot in shots:
-                if asteroid.check_collision(shot):
-                    shot.kill()
-                    asteroid.split()
-        for drawable in drawables:
-            drawable.draw(screen)
-            
-        pygame.display.flip()
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return
 
-        # limit the framerate to 60FPS
-        dt = clock.tick(60) / 1000
+            screen.fill("black")
+            updatables.update(dt)
+            for asteroid in asteroids:
+                if asteroid.check_collision(player):
+                    print("Game over!")
+                    running = False
+            for asteroid in asteroids:
+                for shot in shots:
+                    if asteroid.check_collision(shot):
+                        shot.kill()
+                        score_to_add = asteroid.split()
+                        score.add_score(score_to_add)
+            for drawable in drawables:
+                drawable.draw(screen)
+
+            pygame.display.flip()
+
+            # limit the framerate to 60FPS
+            dt = clock.tick(60) / 1000
+
+
+        # save score to score file
+        # WARNING : if exit is commented, the score saving will loop
+        score.save_score(player, 'scores.json')
+
+        # TODO : show score and retry/close choice
+        exit(0)
 
 
 if __name__ == "__main__":
