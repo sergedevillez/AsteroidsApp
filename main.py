@@ -34,20 +34,24 @@ def main():
 
     dt = 0
 
+    current_page = "menu"
+
     while True:
-        running = True
 
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    return
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            
+        if current_page == "menu":
+            print('menu')
 
+        elif current_page == "play":
             screen.fill("black")
             updatables.update(dt)
             for asteroid in asteroids:
                 if asteroid.check_collision(player):
                     print("Game over!")
-                    running = False
+                    current_page = "game_over"
             for asteroid in asteroids:
                 for shot in shots:
                     if asteroid.check_collision(shot):
@@ -62,13 +66,14 @@ def main():
             # limit the framerate to 60FPS
             dt = clock.tick(60) / 1000
 
+        elif current_page == "game_over":
+            # save score to score file
+            # WARNING : if exit is commented, the score saving will loop
+            score.save_score(player, 'scores.json')
 
-        # save score to score file
-        # WARNING : if exit is commented, the score saving will loop
-        score.save_score(player, 'scores.json')
-
-        # TODO : show score and retry/close choice
-        exit(0)
+            # TODO : show score and retry/close choice
+            pygame.time.wait(2000)
+            exit(0)
 
 
 if __name__ == "__main__":
