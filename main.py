@@ -44,6 +44,7 @@ def main():
             
         if current_page == "menu":
             print('menu')
+            current_page = "play"
 
         elif current_page == "play":
             screen.fill("black")
@@ -72,7 +73,7 @@ def main():
             score.save_score(player, 'scores.json')
 
             # TODO : show score and retry/close choice
-            pygame.time.wait(2000)
+            pygame.time.wait(1000)
             exit(0)
 
 
